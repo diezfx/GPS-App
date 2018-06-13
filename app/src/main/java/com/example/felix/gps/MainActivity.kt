@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.nfc.Tag
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -17,6 +18,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import net.danlew.android.joda.JodaTimeAndroid
+
 
 class MainActivity : AppCompatActivity(), ServiceConnection {
 
@@ -61,6 +64,9 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+        JodaTimeAndroid.init(this);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -69,6 +75,14 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 
         val btn: Button =findViewById(R.id.button)
 
+
+
+
+
+        var testList=ArrayList<String>()
+
+        testList.add("hallo")
+        testList.add("welt")
 
 
 
@@ -92,13 +106,20 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
             Log.d("permissions", "not granted")
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+            Log.d("permissions", "granted")
+        }
+        // permissions not granted so far
+        else {
+            Log.d("permissions", "not granted")
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
 
 
         val i = Intent(this, GPS_LoggingJob::class.java)
 
         startService()
-
-
 
     }
 
@@ -111,13 +132,14 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
 
         service = i
 
+        var logManager=LogManager("test.txt",this)
 
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (Manifest.permission.ACCESS_FINE_LOCATION in permissions) {
+        if (Manifest.permission.ACCESS_FINE_LOCATION in permissions && Manifest.permission.WRITE_EXTERNAL_STORAGE in permissions) {
             startService()
         }
 

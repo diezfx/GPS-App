@@ -22,7 +22,10 @@ class GPS_LoggingJob : Service() {
     val distance: Float = 10.0f
 
     var locationManager: LocationManager? = null
-    var locationInfos = LocationInfos()
+    var logManager=LogManager("testfile.txt",this)
+    var locationInfos = LocationInfos(logManager)
+
+
 
 
     var TAG = "LoggingService"
@@ -35,6 +38,8 @@ class GPS_LoggingJob : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         Log.i(TAG, "Logging service started.")
+
+
 
         val gps_callback = GPS_LocationListener(locationInfos)
 
@@ -101,7 +106,7 @@ class GPS_LoggingJob : Service() {
 
     }
 
-    class LocationInfos{
+    class LocationInfos(val logManager: LogManager){
         var averageSpeed=AverageSpeed()
         var lastLocation:Location?=null
 
@@ -110,7 +115,13 @@ class GPS_LoggingJob : Service() {
             lastLocation=location
             averageSpeed.addValue(location!!.speed,1.0)
 
+            logManager.addPoint(location)
+
+
+
+
         }
+
 
 
 

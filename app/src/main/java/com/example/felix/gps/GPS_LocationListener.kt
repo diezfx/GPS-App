@@ -16,6 +16,8 @@ class GPS_LocationListener(val locationInfos: GPS_LoggingJob.LocationInfos):Loca
 
     }
 
+
+
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
         Log.i(TAG,status.toString())
     }
